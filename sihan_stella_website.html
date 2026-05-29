@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sihan (Stella) Chen</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --gold:    #C9A84C;
+    --gold-lt: #E8C97A;
+    --gold-dk: #8A6820;
+    --bg:      #0D0D10;
+    --bg2:     #13131A;
+    --bg3:     #1A1A26;
+    --text:    #E8E4DC;
+    --muted:   #8A8580;
+    --border:  rgba(201,168,76,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  /* ── Canvas particles ── */
+  #particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+  /* ── Nav ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem 3rem;
+    background: rgba(13,13,16,0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.78rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.25s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ── Layout ── */
+  main { position: relative; z-index: 1; }
+
+  section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 5.5rem 2rem;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+  }
+
+  /* ── Hero ── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding-top: 7rem;
+    position: relative;
+  }
+  .hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 9vw, 6.5rem);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    opacity: 0;
+    animation: fadeUp 0.9s 0.2s forwards;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--gold-lt);
+  }
+  .hero-subtitle {
+    margin-top: 1.6rem;
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 520px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+  .hero-links {
+    margin-top: 2.5rem;
+    display: flex; gap: 1.2rem; flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.65rem 1.5rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    background: transparent;
+    transition: background 0.25s, color 0.25s;
+    cursor: pointer;
+  }
+  .btn:hover { background: var(--gold); color: var(--bg); }
+  .btn-fill { background: var(--gold); color: var(--bg); }
+  .btn-fill:hover { background: var(--gold-lt); border-color: var(--gold-lt); }
+
+  .hero-scroll {
+    position: absolute; bottom: 2.5rem; left: 2rem;
+    display: flex; align-items: center; gap: 0.7rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeUp 1s 1s forwards;
+  }
+  .scroll-line {
+    width: 40px; height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+
+  /* ── About ── */
+  #about p { color: var(--muted); font-size: 1.02rem; max-width: 680px; margin-bottom: 1rem; }
+  #about p strong { color: var(--text); font-weight: 500; }
+
+  .interests {
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+    margin-top: 1.8rem;
+  }
+  .tag {
+    padding: 0.35rem 0.9rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    border: 1px solid var(--border);
+    color: var(--gold);
+    background: rgba(201,168,76,0.05);
+  }
+
+  /* ── Education ── */
+  .edu-grid { display: flex; flex-direction: column; gap: 1.6rem; }
+  .edu-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.3rem 1rem;
+    padding: 1.4rem 1.6rem;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .edu-item:hover { border-color: var(--gold); transform: translateX(4px); }
+  .edu-school {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.22rem;
+    font-weight: 400;
+    color: var(--text);
+    grid-column: 1;
+  }
+  .edu-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    grid-column: 2;
+    text-align: right;
+    align-self: start;
+    padding-top: 0.2rem;
+  }
+  .edu-degree { font-size: 0.82rem; color: var(--muted); grid-column: 1 / -1; }
+  .edu-gpa { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--gold); margin-top: 0.2rem; }
+
+  /* ── Publications ── */
+  .pub-list { display: flex; flex-direction: column; gap: 1.1rem; }
+  .pub-item {
+    padding: 1.3rem 1.5rem;
+    border-left: 2px solid var(--border);
+    background: var(--bg2);
+    transition: border-color 0.3s;
+    position: relative;
+  }
+  .pub-item:hover { border-left-color: var(--gold); }
+  .pub-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold-dk);
+    position: absolute; top: 1.3rem; right: 1.2rem;
+  }
+  .pub-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
+    padding-right: 2.5rem;
+  }
+  .pub-title a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .pub-title a:hover { color: var(--gold-lt); border-bottom-color: var(--gold-lt); }
+  .pub-authors { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.25rem; }
+  .pub-authors strong { color: var(--gold-lt); }
+  .pub-venue {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+  }
+  .pub-badge {
+    display: inline-block;
+    margin-left: 0.6rem;
+    padding: 0.1rem 0.45rem;
+    font-size: 0.6rem;
+    border: 1px solid var(--gold-dk);
+    color: var(--gold);
+    vertical-align: middle;
+  }
+
+  /* ── AI Learning ── */
+  #ai-learning { background: var(--bg); }
+  .learning-intro { color: var(--muted); max-width: 600px; margin-bottom: 2.5rem; font-size: 0.95rem; }
+
+  .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.2rem; }
+  .course-card {
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .course-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .course-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+  .course-card.wip { opacity: 0.6; }
+  .course-status {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--gold);
+  }
+  .status-dot.wip { background: var(--muted); }
+  .course-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 0.4rem;
+  }
+  .course-provider {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .course-link {
+    display: inline-block;
+    margin-top: 0.9rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .course-link:hover { border-bottom-color: var(--gold); }
+
+  /* ── Awards ── */
+  .awards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.8rem; }
+  .award-item {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    font-size: 0.85rem;
+    color: var(--text);
+    transition: border-color 0.25s;
+  }
+  .award-item:hover { border-color: var(--gold); }
+  .award-diamond {
+    width: 8px; height: 8px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    margin-top: 0.38rem;
+  }
+
+  /* ── Footer ── */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 3rem 2rem 4rem;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  footer span { color: var(--gold); }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dk); }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#hero">S. CHEN</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#publications">Research</a></li>
+    <li><a href="#ai-learning">AI Learning</a></li>
+    <li><a href="#awards">Awards</a></li>
+  </ul>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<section id="hero">
+  <h1 class="hero-name">Sihan<br><em>Stella</em> Chen</h1>
+  <p class="hero-subtitle">Functional nanomaterials &amp; Photons energy transfer — now exploring <em>AI for Materials</em> and large language models for scientific discovery.</p>
+  <div class="hero-links">
+    <a class="btn btn-fill" href="https://scholar.google.com/citations?hl=en&user=vmRHhn4AAAAJ" target="_blank">Google Scholar</a>
+    <a class="btn" href="https://www.linkedin.com/in/sihan-chen-505226335/?skipRedirect=true" target="_blank">LinkedIn</a>
+    <a class="btn" href="https://github.com/SihanChen2" target="_blank">GitHub</a>
+    <a class="btn" href="mailto:sihanc2@andrew.cmu.edu">Contact</a>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">01 — About</div>
+  <h2>Research Profile</h2>
+  <p>I am a 2nd year PhD student in Chemistry at <strong>Carnegie Mellon University</strong> (GPA 4.0/4.0), where I work on atomically precise gold nanoclusters with a focus on their exceptional optical and photonic properties — including NIR-to-visible photon upconversion and shortwave infrared emission.</p>
+  <p>I have passed the oral portion of my qualifying exam and have published in <strong>JACS, Angew. Chem. Int. Ed., Acc. Chem. Res., J. Phys. Chem. Lett.</strong>, and <strong>Chem. Commun.</strong> I am now actively transitioning toward <strong>AI for Materials</strong>, particularly leveraging large language models and autonomous experimentation frameworks to accelerate materials discovery.</p>
+  <p>Beyond gold nanoclusters, my research background spans a range of functional material systems — including <strong>metal-organic frameworks (MOFs)</strong>, <strong>metal-organic compounds</strong>, <strong>3D printing materials</strong>, and <strong>organic photosensitizers</strong> — with hands-on project experience in each area.</p>
+  <div class="interests">
+    <span class="tag">AI for Materials</span>
+    <span class="tag">Large Language Models</span>
+    <span class="tag">Atomically Precise Nanoclusters</span>
+    <span class="tag">NIR Photonics</span>
+    <span class="tag">Functional Materials</span>
+    <span class="tag">Self-Driving Labs</span>
+    <span class="tag">Photon Upconversion</span>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-label">02 — Education</div>
+  <h2>Academic Background</h2>
+  <div class="edu-grid">
+    <div class="edu-item reveal">
+      <div class="edu-school">Carnegie Mellon University</div>
+      <div class="edu-date">Aug 2024 – Present</div>
+      <div class="edu-degree">PhD in Chemistry</div>
+      <div class="edu-gpa">GPA 4.0 / 4.0 · Qualifying Exam Oral Portion Passed</div>
+    </div>
+    <div class="edu-item reveal">
+      <div class="edu-school">Southern University of Science and Technology</div>
+      <div class="edu-date">Sept 2021 – June 2024</div>
+      <div class="edu-degree">Master in Chemistry</div>
+      <div class="edu-gpa">GPA 3.8 / 4.0 · Rank 1 / 75</div>
+    </div>
+    <div class="edu-item reveal">
+      <div class="edu-school">Shantou University</div>
+      <div class="edu-date">Sept 2017 – June 2021</div>
+      <div class="edu-degree">Bachelor in Applied Chemistry</div>
+      <div class="edu-gpa">GPA 90.4 / 100 · Rank 3 / 50</div>
+    </div>
+  </div>
+</section>
+
+<!-- PUBLICATIONS -->
+<section id="publications">
+  <div class="section-label">03 — Research</div>
+  <h2>Publications</h2>
+  <div class="pub-list">
+
+    <!-- First author #1 -->
+    <div class="pub-item reveal">
+      <div class="pub-num">01</div>
+      <div class="pub-title">High-Efficiency NIR-to-Visible Photon Upconversion with Atomically Precise Gold Nanoclusters</div>
+      <div class="pub-authors"><strong>Sihan Chen</strong>, Yitong Wang, Guiying He, Abhrojyoti Mazumder, Chloe Bi, Zhongyu Liu, Lianshun Luo, Avirup Sardar, Weijie Ji, and Rongchao Jin*</div>
+      <div class="pub-venue">To be submitted to JACS <span class="pub-badge">First Author</span></div>
+    </div>
+
+    <!-- First author #2 -->
+    <div class="pub-item reveal">
+      <div class="pub-num">02</div>
+      <div class="pub-title">
+        <a href="https://pubs.rsc.org/en/content/articlelanding/2024/cc/d3cc04147f" target="_blank">Programmable Photochemical Deoxygenation for 2.5D Grayscale Printing</a>
+      </div>
+      <div class="pub-authors"><strong>Sihan Chen</strong>, Hongqi Zhou, Ning Zhou, Jiang He and Wei Lu*</div>
+      <div class="pub-venue">Chem. Commun. 2024, 60, 546–549 <span class="pub-badge">First Author</span></div>
+    </div>
+
+    <div class="pub-item reveal">
+      <div class="pub-num">03</div>
+      <div class="pub-title">
+        <a href="https://pubs.acs.org/doi/pdf/10.1021/acs.jpclett.5c03349?ref=article_openPDF" target="_blank">Manipulating the Intersystem Crossing Process in Atomically Precise Gold Nanoclusters</a>
+      </div>
+      <div class="pub-authors">Guiying He, <strong>Sihan Chen</strong>, Rongchao Jin*</div>
+      <div class="pub-venue">J. Phys. Chem. Lett. 2025, 16, 13118</div>
+    </div>
+
+    <div class="pub-item reveal">
+      <div class="pub-num">04</div>
+      <div class="pub-title">
+        <a href="https://pubs.acs.org/doi/full/10.1021/acs.accounts.5c00782" target="_blank">Atomically Precise Metal Nanoclusters for Near-Infrared-II Photonics</a>
+      </div>
+      <div class="pub-authors">Zhongyu Liu, Avirup Sardar, <strong>Sihan Chen</strong>, Yitong Wang, Rongchao Jin*</div>
+      <div class="pub-venue">Acc. Chem. Res. 2026, 59, 451</div>
+    </div>
+
+    <!-- ExpertLongBench -->
+    <div class="pub-item reveal">
+      <div class="pub-num">05</div>
+      <div class="pub-title">
+        <a href="https://openreview.net/pdf?id=nJvgBolRcR" target="_blank">ExpertLongBench: Benchmarking Language Models on Expert-Level Long-Form Generation Tasks with Structured Checklists</a>
+      </div>
+      <div class="pub-authors">Jie Ruan, Inderjeet Nair, Shuyang Cao, Amy Liu, Sheza Munir, Micah Pollens-Dempsey, Tiffany Chiang, Lucy Kates, Nicholas David, <strong>Sihan Chen</strong>, Ruxin Yang, Yuqian Yang, Jasmine Gump, Tessa Bialek, Vivek Sankaran, Margo Schlanger, Lu Wang*</div>
+      <div class="pub-venue">ICLR 2026 · 3.5K downloads</div>
+    </div>
+
+    <div class="pub-item reveal">
+      <div class="pub-num">06</div>
+      <div class="pub-title">
+        <a href="https://onlinelibrary.wiley.com/doi/full/10.1002/sstr.202500819" target="_blank">Backbone Stiffness-Dependent Photoluminescence of Pendant Fluorophores in Organic Nanoparticles</a>
+      </div>
+      <div class="pub-authors">Rongguan Yin, Ting-Chih Lin, <strong>Sihan Chen</strong>, Hironobu Murata, Lianshun Luo, Xiaolei Hu, Khidong Kim, Elizabeth DiFiglia, Michael R. Bockstaller, Krzysztof Matyjaszewski*</div>
+      <div class="pub-venue">Small Structures 2026; 7:e202500819</div>
+    </div>
+
+    <div class="pub-item reveal">
+      <div class="pub-num">07</div>
+      <div class="pub-title">
+        <a href="https://pubs.rsc.org/en/content/articlepdf/2024/cc/d4cc03482a" target="_blank">Photochemical Reaction-Diffusion-Convection Oscillators Based on Photo-Activated Phosphorescence</a>
+      </div>
+      <div class="pub-authors">Hongqi Zhou, <strong>Sihan Chen</strong>, Shigang Wan, Jiang He and Wei Lu*</div>
+      <div class="pub-venue">Chem. Commun. 2024, 60, 10728</div>
+    </div>
+
+    <div class="pub-item reveal">
+      <div class="pub-num">08</div>
+      <div class="pub-title">
+        <a href="https://onlinelibrary.wiley.com/doi/epdf/10.1002/ange.202422951?saml_referrer" target="_blank">Organocatalytic Asymmetric Construction and Application of Axially Chiral Spiro‐bisindoles</a>
+      </div>
+      <div class="pub-authors">Hao‐Wen Zhao, Fei Jiang, <strong>Sihan Chen</strong>, Jingliang Hu, Shao‐Hua Xiang*, Wei‐Yi Ding, Wei Lu*, Bin Tan*</div>
+      <div class="pub-venue">Angew. Chem. Int. Ed. 2025, 64, e202422951</div>
+    </div>
+
+    <div class="pub-item reveal">
+      <div class="pub-num">09</div>
+      <div class="pub-title">
+        <a href="https://pubs.acs.org/doi/pdf/10.1021/acs.jpclett.5c03069?ref=article_openPDF" target="_blank">A Cocrystal Strategy for Harnessing UV-Responsive Endogenous Photosensitizer in Visible Light Photodynamic Therapy</a>
+      </div>
+      <div class="pub-authors">Wenbin Chen, Menglong Chen, <strong>Sihan Chen</strong>, Zicong Situ, Guanli Chen, Xinda Huang, Yibing Song, Shun-Li Chen, Li Dang, David Lee Phillips, Ming-De Li*</div>
+      <div class="pub-venue">J. Phys. Chem. Lett. 2026, 17, 1393</div>
+    </div>
+
+    <div class="pub-item reveal">
+      <div class="pub-num">10</div>
+      <div class="pub-title">
+        <a href="https://onlinelibrary.wiley.com/doi/10.1002/anie.202109964" target="_blank">Harnessing Shape Complementarity for Upgraded Cyclohexane Purification through Adaptive Bottlenecked Pores in an Imidazole‐Containing MOF</a>
+      </div>
+      <div class="pub-authors">Chun-Rong Ye, Wen-Jian Wang, Wei Chen, Yonghong Xiao, Hai-Feng Zhang, Bing-Ling Dai, <strong>Si-Han Chen</strong>, Xu-Dong Wu, Mian Li*, Xiao-Chun Huang*</div>
+      <div class="pub-venue">Angew. Chem. Int. Ed. 2021, 60, 2359</div>
+    </div>
+
+    <div class="pub-item reveal">
+      <div class="pub-num">11</div>
+      <div class="pub-title">
+        <a href="https://pubs.acs.org/doi/full/10.1021/jacs.6c02971" target="_blank">Gold Quantum Rods Emit in the Shortwave Infrared (1000–2200 nm) with 10<sup>4–5</sup> M<sup>–1</sup> cm<sup>–1</sup> Ultrabrightness</a>
+      </div>
+      <div class="pub-authors">Lianshun Luo, Guiying He, Zhongyu Liu, Avirup Sardar, Weijie Ji, Abhrojyoti Mazumder, <strong>Sihan Chen</strong>, Qi Li, Rongchao Jin*</div>
+      <div class="pub-venue">J. Am. Chem. Soc. 2026, 148, 12520</div>
+    </div>
+
+    <div class="pub-item reveal">
+      <div class="pub-num">12</div>
+      <div class="pub-title">
+        <a href="https://pubs.acs.org/doi/pdf/10.1021/jacs.5c14654?ref=article_openPDF" target="_blank">Au76(SR)42 Square Quantum Platelet: One-Dimensional Growth of Quantum Rods Turns 90 Degrees</a>
+      </div>
+      <div class="pub-authors">Yitong Wang, Avirup Sardar, Zhongyu Liu, Christopher G. Gianopoulos, Guiying He, Xiaolin Liu, <strong>Sihan Chen</strong>, Kristin Kirschbaum, Abhrojyoti Mazumder, Micea Cotlet, De-en Jiang, Rongchao Jin*</div>
+      <div class="pub-venue">J. Am. Chem. Soc. 2025, 147, 42752</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- AI LEARNING -->
+<section id="ai-learning">
+  <div class="section-label">04 — AI Learning Journey</div>
+  <h2>Exploring AI &amp; LLMs</h2>
+  <p class="learning-intro">Actively building foundations in machine learning, transformers, and large language models — bridging experimental materials expertise with AI-driven scientific discovery.</p>
+
+  <div class="courses-grid">
+
+    <div class="course-card reveal">
+      <div class="course-status">
+        <div class="status-dot"></div>
+        <span style="color:var(--gold)">Completed</span>
+      </div>
+      <div class="course-name">How Transformer LLMs Work</div>
+      <div class="course-provider">DeepLearning.AI · Andrew Ng</div>
+      <a class="course-link" href="https://www.deeplearning.ai/courses/how-transformer-llms-work?_gl=1*1qpcslk*_gcl_au*MTA5MDcxOTcyOC4xNzc5MTI4MDQz*_ga*MjAzMTY1OTg0Ni4xNzc5MTI4MDQz*_ga_FR2MZ1VLMS*czE3ODAwODMyMTYkbzIwJGcwJHQxNzgwMDgzMjE2JGo2MCRsMCRoMA.." target="_blank">View Course →</a>
+    </div>
+
+    <div class="course-card reveal">
+      <div class="course-status">
+        <div class="status-dot"></div>
+        <span style="color:var(--gold)">Completed</span>
+      </div>
+      <div class="course-name">AI Python for Beginners</div>
+      <div class="course-provider">DeepLearning.AI · Andrew Ng</div>
+      <a class="course-link" href="https://www.deeplearning.ai/courses/ai-python-for-beginners?_gl=1*8ko1b3*_gcl_au*MTA5MDcxOTcyOC4xNzc5MTI4MDQz*_ga*MjAzMTY1OTg0Ni4xNzc5MTI4MDQz*_ga_FR2MZ1VLMS*czE3ODAwODMyMTYkbzIwJGcxJHQxNzgwMDgzMjUxJGoyNSRsMCRoMA.." target="_blank">View Course →</a>
+    </div>
+
+    <div class="course-card wip reveal">
+      <div class="course-status">
+        <div class="status-dot wip"></div>
+        <span style="color:var(--muted)">In Progress</span>
+      </div>
+      <div class="course-name">Machine Learning Specialization</div>
+      <div class="course-provider">DeepLearning.AI · Andrew Ng</div>
+      <a class="course-link" href="https://www.deeplearning.ai/specializations/machine-learning?_gl=1*jj1nb7*_gcl_au*MTA5MDcxOTcyOC4xNzc5MTI4MDQz*_ga*MjAzMTY1OTg0Ni4xNzc5MTI4MDQz*_ga_FR2MZ1VLMS*czE3ODAwODMyMTYkbzIwJGcxJHQxNzgwMDgzMzE2JGoyNyRsMCRoMA.." target="_blank">View Course →</a>
+    </div>
+
+    <div class="course-card wip reveal">
+      <div class="course-status">
+        <div class="status-dot wip"></div>
+        <span style="color:var(--muted)">In Progress</span>
+      </div>
+      <div class="course-name">Agentic AI</div>
+      <div class="course-provider">DeepLearning.AI</div>
+      <a class="course-link" href="https://www.deeplearning.ai/courses/agentic-ai?_gl=1*10nq2zw*_gcl_au*MTA5MDcxOTcyOC4xNzc5MTI4MDQz*_ga*MjAzMTY1OTg0Ni4xNzc5MTI4MDQz*_ga_FR2MZ1VLMS*czE3ODAwODMyMTYkbzIwJGcxJHQxNzgwMDgzMzU3JGo0OCRsMCRoMA.." target="_blank">View Course →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- AWARDS -->
+<section id="awards">
+  <div class="section-label">05 — Honors</div>
+  <h2>Awards &amp; Recognition</h2>
+  <div class="awards-grid">
+    <div class="award-item reveal"><div class="award-diamond"></div>Outstanding Master's Students (2023)</div>
+    <div class="award-item reveal"><div class="award-diamond"></div>National Scholarship (2019–2020)</div>
+    <div class="award-item reveal"><div class="award-diamond"></div>National Inspirational Scholarship (2017–2019)</div>
+    <div class="award-item reveal"><div class="award-diamond"></div>National Chemical Design Competition — 2nd Prize (2019)</div>
+    <div class="award-item reveal"><div class="award-diamond"></div>Chemical Design Competition South China — 1st Prize (2019)</div>
+    <div class="award-item reveal"><div class="award-diamond"></div>Outstanding Graduate, Faculty of Science (2021)</div>
+    <div class="award-item reveal"><div class="award-diamond"></div>Outstanding Academic &amp; Scientific Contribution Award (2019)</div>
+    <div class="award-item reveal"><div class="award-diamond"></div>Chemistry Alumni Scholarship (2019)</div>
+    <div class="award-item reveal"><div class="award-diamond"></div>First-class Academic Scholarship (2018–2019)</div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span>Sihan (Stella) Chen</span> · 2nd Year PhD Candidate, Carnegie Mellon University · Chemistry<br>
+  <span style="color:var(--muted);margin-top:0.4rem;display:block">sihanc2@andrew.cmu.edu</span>
+</footer>
+
+<script>
+/* ── Particle canvas ── */
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.r = Math.random() * 1.2 + 0.3;
+    this.vx = (Math.random() - 0.5) * 0.18;
+    this.vy = (Math.random() - 0.5) * 0.18;
+    this.alpha = Math.random() * 0.45 + 0.05;
+  }
+  update() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(201,168,76,${this.alpha})`;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 110; i++) particles.push(new Particle());
+
+function drawConnections() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if (d < 100) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(201,168,76,${0.06 * (1 - d/100)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function loop() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  drawConnections();
+  requestAnimationFrame(loop);
+}
+loop();
+
+/* ── Scroll reveal ── */
+const reveals = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
